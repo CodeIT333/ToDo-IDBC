@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Domain.ToDoItems;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 
 namespace Persistence
@@ -23,9 +24,28 @@ namespace Persistence
             }
         }
 
+        public DbSet<ToDoItem> ToDoItem { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            
+            SetEntityKeys(modelBuilder);
+            ConfigureEntities(modelBuilder);
+        }
+
+        private void SetEntityKeys(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ToDoItem>(entity =>
+            {
+                entity.HasKey(i => i.Id); // add pk
+                entity.Property(i => i.Id).ValueGeneratedNever(); // always generate id value in code
+            });
+        }
+
+        private void ConfigureEntities(ModelBuilder modelBuilder)
+        {
+            modelBuilder.Entity<ToDoItem>()
+                .Property(i => i.Priority)
+                .HasConversion<byte>();  // enum <=> int
         }
     }
 }

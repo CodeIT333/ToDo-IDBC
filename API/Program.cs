@@ -1,5 +1,7 @@
 using API.Configurations;
 using Infrastructure.Configurations;
+using Application.Configurations;
+using Persistence.Configurations;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -10,6 +12,8 @@ builder.Services.AddSwaggerDocumentation();
 builder.Services.AddEndpointsApiExplorer();
 
 builder.Services.AddAPIServices();
+builder.Services.AddApplicationServices();
+builder.Services.AddPersistenceServices(builder.Configuration);
 
 var app = builder.Build();
 
