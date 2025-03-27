@@ -145,5 +145,48 @@ namespace UnitTest.ToDoItems
                 .ThrowAsync<BadRequestException>()
                 .WithMessage(ErrorMessages.INVALID_TO_DO_ITEM_PRIORITY);
         }
+
+        /*--------------------------------------------------------Update-------------------------------------------------------*/
+        [Fact]
+        public async Task UpdateUndoneToDoItem_ReturnsOk()
+        {
+            var item = new TestableToDoItem("name", "desc", ToDoItemPriority.low, new DateTime(2025, 03, 25), false);
+
+            _mockToDoItemRepo.Setup(repo => repo.GetToDoItemAsync(It.IsAny<int>())).ReturnsAsync(item);
+
+            await _service.UpdateToDoItemAsync(item.Id);
+
+            item.IsDone.Should().BeTrue();
+
+            _mockUnitOfWork.Verify(uow => uow.CommitAsync(It.IsAny<CancellationToken>()), Times.Once);
+        }
+
+        [Fact]
+        public async Task UpdateDoneToDoItem_Returns400AlreadyDoneItem()
+        {
+            var item = new TestableToDoItem("name", "desc", ToDoItemPriority.low, new DateTime(2025, 03, 25), true);
+
+            _mockToDoItemRepo.Setup(repo => repo.GetToDoItemAsync(It.IsAny<int>())).ReturnsAsync(item);
+
+            await FluentActions
+                .Invoking(() => _service.UpdateToDoItemAsync(item.Id))
+                .Should()
+                .ThrowAsync<BadRequestException>()
+                .WithMessage(ErrorMessages.ALREADY_DONE_TO_DO_ITEM);
+        }
+
+        [Fact]
+        public async Task UpdateNotExistingToDoItem_Returns404NotFoundItem()
+        {
+            var notExistingId = 0;
+
+            _mockToDoItemRepo.Setup(repo => repo.GetToDoItemAsync(It.IsAny<int>())).ReturnsAsync((ToDoItem?)null);
+
+            await FluentActions
+                .Invoking(() => _service.UpdateToDoItemAsync(notExistingId))
+                .Should()
+                .ThrowAsync<NotFoundException>()
+                .WithMessage(ErrorMessages.NOT_FOUND_TO_DO_ITEM);
+        }
     }
 }

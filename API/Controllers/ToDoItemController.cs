@@ -34,5 +34,14 @@ namespace API.Controllers
             await _toDoItemService.CreateToDoItemAsync(dto);
             return Ok();
         }
+
+        [HttpPut]
+        [SwaggerResponse(204)]
+        [SwaggerResponse(404, Type = typeof(ErrorResponse))]
+        public async Task<ActionResult> UpdateToDoItemAsync(int id)
+        {
+            await _toDoItemService.UpdateToDoItemAsync(id);
+            return Ok();
+        }
     }
 }
