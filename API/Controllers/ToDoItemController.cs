@@ -1,5 +1,6 @@
 ﻿using Application.ToDoItems;
 using Application.ToDoItems.DTOs;
+using Domain.Commons.Models;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
@@ -23,6 +24,15 @@ namespace API.Controllers
         {
             var data = await _toDoItemService.ListToDoItemsAsync(isDone);
             return Ok(data);
+        }
+
+        [HttpPost]
+        [SwaggerResponse(201)]
+        [SwaggerResponse(400, Type = typeof(ErrorResponse))]
+        public async Task<ActionResult> CreateToDoItemAsync(ToDoItemCreateDTO dto)
+        {
+            await _toDoItemService.CreateToDoItemAsync(dto);
+            return Ok();
         }
     }
 }

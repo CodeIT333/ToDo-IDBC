@@ -1,6 +1,7 @@
 ﻿using Application.Commons;
 using Application.ToDoItems.DTOs;
 using Application.ToDoItems.Specs;
+using Domain.ToDoItems;
 using Mapster;
 
 namespace Application.ToDoItems
@@ -23,6 +24,17 @@ namespace Application.ToDoItems
         {
             var items = await _toDoItemRepo.ListToDoItemsAsync(new ToDoItemIsDoneSpec(isDone));
             return items.Adapt<List<ToDoItemListDTO>>();
+        }
+
+        public async Task CreateToDoItemAsync(ToDoItemCreateDTO dto)
+        {
+            var item = ToDoItem.Create(
+                dto.name,
+                dto.description,
+                dto.priority);
+
+            await _toDoItemRepo.CreateToDoItemAsync(item);
+            await _uow.CommitAsync();
         }
     }
 }

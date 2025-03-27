@@ -5,7 +5,6 @@ using Domain.Commons;
 using Domain.ToDoItems;
 using FluentAssertions;
 using Moq;
-using System.Linq;
 using UnitTest.Configurations;
 using UnitTest.ToDoItems.Testables;
 
