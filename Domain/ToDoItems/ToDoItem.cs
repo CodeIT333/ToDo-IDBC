@@ -24,5 +24,10 @@ namespace Domain.ToDoItems
                 CreatedAt = DateTime.UtcNow,
             };
         }
+
+        public void MarkAsDone()
+        {
+            IsDone = true;
+        }
     }
 }

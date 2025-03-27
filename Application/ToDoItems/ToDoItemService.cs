@@ -43,5 +43,19 @@ namespace Application.ToDoItems
             await _toDoItemRepo.CreateToDoItemAsync(item);
             await _uow.CommitAsync();
         }
+
+        public async Task UpdateToDoItemAsync(int id)
+        {
+            var item = await _toDoItemRepo.GetToDoItemAsync(id);
+            if (item is null)
+                throw new NotFoundException(ErrorMessages.NOT_FOUND_TO_DO_ITEM);
+
+            if (item.IsDone)
+                throw new BadRequestException(ErrorMessages.ALREADY_DONE_TO_DO_ITEM);
+
+            item.MarkAsDone();
+
+            await _uow.CommitAsync();
+        }
     }
 }
