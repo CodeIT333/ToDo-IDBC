@@ -2,6 +2,7 @@
 using Application.ToDoItems.DTOs;
 using Application.ToDoItems.Specs;
 using Domain.ToDoItems;
+using Infrastructure.Exceptions;
 using Mapster;
 
 namespace Application.ToDoItems
@@ -28,6 +29,12 @@ namespace Application.ToDoItems
 
         public async Task CreateToDoItemAsync(ToDoItemCreateDTO dto)
         {
+            if (string.IsNullOrWhiteSpace(dto.name))
+                throw new BadRequestException(ErrorMessages.REQUIRED_TO_DO_ITEM_NAME);
+
+            if (!Enum.IsDefined(typeof(ToDoItemPriority), dto.priority))
+                throw new BadRequestException(ErrorMessages.INVALID_TO_DO_ITEM_PRIORITY);
+
             var item = ToDoItem.Create(
                 dto.name,
                 dto.description,
