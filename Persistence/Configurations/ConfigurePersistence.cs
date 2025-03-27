@@ -1,7 +1,9 @@
 ﻿using Application.Commons;
+using Application.ToDoItems;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Persistence.Repositories.ToDoItems;
 
 namespace Persistence.Configurations
 {
@@ -14,7 +16,7 @@ namespace Persistence.Configurations
                 options.UseSqlServer(configuration.GetConnectionString("DefaultConnection")));
 
             // register repos
-
+            services.AddScoped<IToDoItemRepository, ToDoItemRepository>();
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
 
