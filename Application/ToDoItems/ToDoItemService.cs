@@ -5,7 +5,6 @@ using Mapster;
 
 namespace Application.ToDoItems
 {
-    // TODO DB: item id identity torlese (lehet random int ertekeket generalni, mint guid-nal? -ha nem, akkor maradjon, es toroljuk a valuenotgenerated kitetelt)
     public class ToDoItemService
     {
         private readonly IToDoItemRepository _toDoItemRepo;

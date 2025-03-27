@@ -14,6 +14,6 @@ namespace Persistence.Repositories.ToDoItems
         }
 
         public async Task<List<ToDoItem>> ListToDoItemsAsync(Specification<ToDoItem> spec) => 
-            await _dbContext.ToDoItem.Where(spec.ToExpressAll()).OrderByDescending(i => i.Priority).ThenBy(i => i.CreatedAt).ToListAsync();
+            await _dbContext.ToDoItem.Where(spec.ToExpressAll()).OrderByDescending(i => i.Priority).ThenByDescending(i => i.CreatedAt).ToListAsync();
     }
 }

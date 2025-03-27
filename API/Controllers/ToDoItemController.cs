@@ -19,7 +19,7 @@ namespace API.Controllers
 
         [HttpGet]
         [SwaggerResponse(200, Type = typeof(List<ToDoItemListDTO>))]
-        public async Task<ActionResult<List<ToDoItemListDTO>>> ListToDoItemsAsync([FromQuery] bool isDone = true)
+        public async Task<ActionResult<List<ToDoItemListDTO>>> ListToDoItemsAsync([FromQuery] bool isDone = false)
         {
             var data = await _toDoItemService.ListToDoItemsAsync(isDone);
             return Ok(data);

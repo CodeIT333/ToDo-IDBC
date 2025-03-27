@@ -37,7 +37,6 @@ namespace Persistence
             modelBuilder.Entity<ToDoItem>(entity =>
             {
                 entity.HasKey(i => i.Id); // add pk
-                entity.Property(i => i.Id).ValueGeneratedNever(); // always generate id value in code
             });
         }
 
@@ -45,7 +44,7 @@ namespace Persistence
         {
             modelBuilder.Entity<ToDoItem>()
                 .Property(i => i.Priority)
-                .HasConversion<byte>();  // enum <=> int
+                .HasConversion<byte>();  // enum <=> byte
         }
     }
 }
