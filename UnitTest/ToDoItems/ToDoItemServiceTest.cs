@@ -4,8 +4,8 @@ using Application.ToDoItems.DTOs;
 using Domain.Commons;
 using Domain.ToDoItems;
 using FluentAssertions;
+using Infrastructure.Exceptions;
 using Moq;
-using System.Linq;
 using UnitTest.Configurations;
 using UnitTest.ToDoItems.Testables;
 
@@ -85,6 +85,65 @@ namespace UnitTest.ToDoItems
             var result = await _service.ListToDoItemsAsync(false);
 
             result.Should().BeEmpty();
+        }
+
+        /*--------------------------------------------------------Create-------------------------------------------------------*/
+        [Fact]
+        public async Task CreateToDoItem_ReturnsOk()
+        {
+            var name = "name";
+            var priority = ToDoItemPriority.low;
+            var dto = new ToDoItemCreateDTO
+            {
+                name = name,
+                priority = priority
+            };
+
+            ToDoItem? capturedItem = null;
+
+            _mockToDoItemRepo.Setup(repo => repo.CreateToDoItemAsync(It.IsAny<ToDoItem>()))
+                .Callback<ToDoItem>(item => capturedItem = item);
+
+            await _service.CreateToDoItemAsync(dto);
+
+            _mockToDoItemRepo.Verify(repo => repo.CreateToDoItemAsync(It.IsAny<ToDoItem>()), Times.Once);
+
+            capturedItem.Should().NotBeNull();
+            capturedItem!.Name.Should().Be(name);
+            capturedItem.Priority.Should().Be(priority);
+        }
+
+        [Fact]
+        public async Task CreateToDoItem_Returns400RequiredName()
+        {
+            var priority = ToDoItemPriority.low;
+            var dto = new ToDoItemCreateDTO
+            {
+                priority = priority
+            };
+
+            await FluentActions
+                .Invoking(() => _service.CreateToDoItemAsync(dto))
+                .Should()
+                .ThrowAsync<BadRequestException>()
+                .WithMessage(ErrorMessages.REQUIRED_TO_DO_ITEM_NAME);
+        }
+
+        [Fact]
+        public async Task CreateToDoItem_Returns400InvalidPriority()
+        {
+            var name = "name";
+            var dto = new ToDoItemCreateDTO
+            {
+                name = name,
+                priority = 0
+            };
+
+            await FluentActions
+                .Invoking(() => _service.CreateToDoItemAsync(dto))
+                .Should()
+                .ThrowAsync<BadRequestException>()
+                .WithMessage(ErrorMessages.INVALID_TO_DO_ITEM_PRIORITY);
         }
     }
 }
