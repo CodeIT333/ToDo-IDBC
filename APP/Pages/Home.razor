@@ -1,5 +1,8 @@
-﻿@page "/"
+﻿@using APP.Services
+
+@page "/"
 @inject HttpClient HttpClient
+@inject ToDoItemService service
 
 <PageTitle>Home</PageTitle>
 
@@ -12,6 +15,52 @@
     </label>
     <span>@(isDone ? "Show Completed" : "Show Incomplete")</span>
 </div>
+
+<button class="btn btn-primary" @onclick="ShowAddModal">Add New To-Do Item</button>
+
+@if (showAddModal)
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New To-Do Item</h5>
+                    <button type="button" class="btn-close" @onclick="HideAddModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="newItem" OnValidSubmit="AddToDoItemAsync">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText class="form-control" @bind-Value="newItem.name" />
+                            <ValidationMessage For="@(() => newItem.name)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputTextArea class="form-control" @bind-Value="newItem.description" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Priority</label>
+                            <InputSelect class="form-select" @bind-Value="newItem.priority">
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => newItem.priority)" />
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Add</button>
+                        <button type="button" class="btn btn-secondary" @onclick="HideAddModal">Cancel</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 
 @if (!items.Any())
 {
@@ -39,7 +88,7 @@ else
                 <td>@item.description</td>
                 <td>@item.priority</td>
                 <td>@item.createdAt.ToString("yyyy-MM-dd HH:mm")</td>
-                <td>@(item.isDone ? "✔️" : "❌")</td>
+                <td>@(item.isDone ? "Yes" : "No")</td>
             </tr>
         }
     </tbody>
@@ -48,7 +97,6 @@ else
 
 @code {
     private bool isDone = false;
-    private string errorMessage = string.Empty;
     private bool showAddModal = false;
 
     List<ToDoItemList> items = new();
@@ -61,19 +109,34 @@ else
 
     private async Task LoadToDoItemsAsync()
     {
-        try
-        {
-            items = await HttpClient.GetFromJsonAsync<List<ToDoItemList>>($"https://localhost:7066/todo-items?isDone={isDone}");
-        }
-        catch (Exception ex)
-        {
-            errorMessage = $"{ex.Message}";
-        }
+        items = await service.ListToDoItemsAsync(isDone);
     }
 
     private async Task ToggleIsDone(ChangeEventArgs e)
     {
         isDone = (bool)e.Value;
         await LoadToDoItemsAsync();
+    }
+
+    private void ShowAddModal()
+    {
+        newItem = new ToDoItemCreate();
+        showAddModal = true;
+    }
+
+    private void HideAddModal()
+    {
+        showAddModal = false;
+    }
+
+    private async Task AddToDoItemAsync()
+    {
+        var response = await service.CreateToDoItemAsync(newItem);
+
+        if (response.IsSuccessStatusCode)
+        {
+            showAddModal = false;
+            await LoadToDoItemsAsync();
+        }
     }
 }
