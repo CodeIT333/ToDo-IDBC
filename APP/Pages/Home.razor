@@ -5,14 +5,17 @@
 
 <h1>To-Do Item List</h1>
 
-<div>
-    <label for="isDoneToggle">Completed/incompleted tasks:</label>
-    <input type="checkbox" id="isDoneToggle" @bind="isDone" />
+ <div class="toggle-container">
+    <label class="switch">
+        <input type="checkbox" checked="@isDone" @onchange="ToggleIsDone">
+        <span class="slider"></span>
+    </label>
+    <span>@(isDone ? "Show Completed" : "Show Incomplete")</span>
 </div>
 
 @if (!items.Any())
 {
-<p>No to-do items found.</p>
+<p>No to-do items found :c</p>
 }
 else
 {
@@ -45,27 +48,32 @@ else
 
 @code {
     private bool isDone = false;
-    List<ToDoItemListDTO> items = [];
+    private string errorMessage = string.Empty;
+    private bool showAddModal = false;
+
+    List<ToDoItemList> items = new();
+    private ToDoItemCreate newItem = new();
 
     protected override async Task OnInitializedAsync()
     {
-        items = await HttpClient.GetFromJsonAsync<List<ToDoItemListDTO>>("https://localhost:7066/todo-items?isDone={isDone}");
+        await LoadToDoItemsAsync();
     }
 
-    public class ToDoItemListDTO
+    private async Task LoadToDoItemsAsync()
     {
-        public int id { get; set; }
-        public string name { get; set; }
-        public string? description { get; set; }
-        public ToDoItemPriority priority { get; set; }
-        public DateTime createdAt { get; set; }
-        public bool isDone { get; set; }
+        try
+        {
+            items = await HttpClient.GetFromJsonAsync<List<ToDoItemList>>($"https://localhost:7066/todo-items?isDone={isDone}");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"{ex.Message}";
+        }
     }
 
-    public enum ToDoItemPriority
+    private async Task ToggleIsDone(ChangeEventArgs e)
     {
-        Low = 1,
-        Medium = 2,
-        High = 3
+        isDone = (bool)e.Value;
+        await LoadToDoItemsAsync();
     }
 }
