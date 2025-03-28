@@ -3,22 +3,24 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.11.35303.130
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "API", "API\API.csproj", "{989D0EDF-3B99-442A-803B-2DE3745B91D7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "API", "API\API.csproj", "{989D0EDF-3B99-442A-803B-2DE3745B91D7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Application", "Application\Application.csproj", "{6C304A42-CD3A-4346-BA77-0FD618332ADB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Application", "Application\Application.csproj", "{6C304A42-CD3A-4346-BA77-0FD618332ADB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Domain", "Domain\Domain.csproj", "{C422DB5C-4A2C-451D-B236-4A6B5E128E3E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Domain", "Domain\Domain.csproj", "{C422DB5C-4A2C-451D-B236-4A6B5E128E3E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{1AF0BB0A-29B7-4E36-BFE3-AAACBFD57459}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Infrastructure", "Infrastructure\Infrastructure.csproj", "{1AF0BB0A-29B7-4E36-BFE3-AAACBFD57459}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Persistence", "Persistence\Persistence.csproj", "{A55BFCF9-0703-45F5-9369-4721B036AE47}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Persistence", "Persistence\Persistence.csproj", "{A55BFCF9-0703-45F5-9369-4721B036AE47}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTest", "UnitTest\UnitTest.csproj", "{8BE02C06-8324-4AE3-AA4E-86885C821595}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "UnitTest", "UnitTest\UnitTest.csproj", "{8BE02C06-8324-4AE3-AA4E-86885C821595}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{69508969-FCBE-40A7-AB97-C4C4B1E1833E}"
 	ProjectSection(SolutionItems) = preProject
 		.gitignore = .gitignore
 	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "APP", "APP\APP.csproj", "{BFC765E3-80F2-4D98-A3D4-401594CA5BD4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -50,6 +52,10 @@ Global
 		{8BE02C06-8324-4AE3-AA4E-86885C821595}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8BE02C06-8324-4AE3-AA4E-86885C821595}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8BE02C06-8324-4AE3-AA4E-86885C821595}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BFC765E3-80F2-4D98-A3D4-401594CA5BD4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BFC765E3-80F2-4D98-A3D4-401594CA5BD4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BFC765E3-80F2-4D98-A3D4-401594CA5BD4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BFC765E3-80F2-4D98-A3D4-401594CA5BD4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

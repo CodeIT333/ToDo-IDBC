@@ -1,0 +1,79 @@
+﻿@page "/"
+@inject HttpClient HttpClient
+
+<PageTitle>Home</PageTitle>
+
+<h1>To-Do Item List</h1>
+
+ <div class="toggle-container">
+    <label class="switch">
+        <input type="checkbox" checked="@isDone" @onchange="ToggleIsDone">
+        <span class="slider"></span>
+    </label>
+    <span>@(isDone ? "Show Completed" : "Show Incomplete")</span>
+</div>
+
+@if (!items.Any())
+{
+<p>No to-do items found :c</p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Priority</th>
+            <th>Created At</th>
+            <th>Is Done</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in items)
+        {
+            <tr>
+                <td>@item.id</td>
+                <td>@item.name</td>
+                <td>@item.description</td>
+                <td>@item.priority</td>
+                <td>@item.createdAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@(item.isDone ? "✔️" : "❌")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@code {
+    private bool isDone = false;
+    private string errorMessage = string.Empty;
+    private bool showAddModal = false;
+
+    List<ToDoItemList> items = new();
+    private ToDoItemCreate newItem = new();
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadToDoItemsAsync();
+    }
+
+    private async Task LoadToDoItemsAsync()
+    {
+        try
+        {
+            items = await HttpClient.GetFromJsonAsync<List<ToDoItemList>>($"https://localhost:7066/todo-items?isDone={isDone}");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"{ex.Message}";
+        }
+    }
+
+    private async Task ToggleIsDone(ChangeEventArgs e)
+    {
+        isDone = (bool)e.Value;
+        await LoadToDoItemsAsync();
+    }
+}
