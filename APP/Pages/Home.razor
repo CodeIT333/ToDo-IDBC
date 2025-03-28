@@ -1,0 +1,71 @@
+﻿@page "/"
+@inject HttpClient HttpClient
+
+<PageTitle>Home</PageTitle>
+
+<h1>To-Do Item List</h1>
+
+<div>
+    <label for="isDoneToggle">Completed/incompleted tasks:</label>
+    <input type="checkbox" id="isDoneToggle" @bind="isDone" />
+</div>
+
+@if (!items.Any())
+{
+<p>No to-do items found.</p>
+}
+else
+{
+<table class="table">
+    <thead>
+        <tr>
+            <th>ID</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Priority</th>
+            <th>Created At</th>
+            <th>Is Done</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in items)
+        {
+            <tr>
+                <td>@item.id</td>
+                <td>@item.name</td>
+                <td>@item.description</td>
+                <td>@item.priority</td>
+                <td>@item.createdAt.ToString("yyyy-MM-dd HH:mm")</td>
+                <td>@(item.isDone ? "✔️" : "❌")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+}
+
+@code {
+    private bool isDone = false;
+    List<ToDoItemListDTO> items = [];
+
+    protected override async Task OnInitializedAsync()
+    {
+        items = await HttpClient.GetFromJsonAsync<List<ToDoItemListDTO>>("https://localhost:7066/todo-items?isDone={isDone}");
+    }
+
+    public class ToDoItemListDTO
+    {
+        public int id { get; set; }
+        public string name { get; set; }
+        public string? description { get; set; }
+        public ToDoItemPriority priority { get; set; }
+        public DateTime createdAt { get; set; }
+        public bool isDone { get; set; }
+    }
+
+    public enum ToDoItemPriority
+    {
+        Low = 1,
+        Medium = 2,
+        High = 3
+    }
+}
