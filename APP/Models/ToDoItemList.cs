@@ -1,4 +1,6 @@
-﻿namespace APP.Models
+﻿using Domain.ToDoItems;
+
+namespace APP.Models
 {
     public class ToDoItemList
     {

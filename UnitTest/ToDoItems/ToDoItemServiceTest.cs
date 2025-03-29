@@ -31,10 +31,10 @@ namespace UnitTest.ToDoItems
         [Fact]
         public async Task ListToDoItems_ReturnsOrderedUndoneItems()
         {
-            var item1 = new TestableToDoItem("name1", "description1", ToDoItemPriority.low, new DateTime(2025, 03, 22), false);
-            var item2 = new TestableToDoItem("name2", "description2", ToDoItemPriority.medium, new DateTime(2025, 03, 25), true);
-            var item3 = new TestableToDoItem("name3", "description3", ToDoItemPriority.high, new DateTime(2025, 03, 24), false);
-            var item4 = new TestableToDoItem("name4", "description4", ToDoItemPriority.medium, new DateTime(2025, 03, 24), true);
+            var item1 = new TestableToDoItem("name1", "description1", ToDoItemPriority.Low, new DateTime(2025, 03, 22), false);
+            var item2 = new TestableToDoItem("name2", "description2", ToDoItemPriority.Medium, new DateTime(2025, 03, 25), true);
+            var item3 = new TestableToDoItem("name3", "description3", ToDoItemPriority.High, new DateTime(2025, 03, 24), false);
+            var item4 = new TestableToDoItem("name4", "description4", ToDoItemPriority.Medium, new DateTime(2025, 03, 24), true);
 
             var items = new List<ToDoItem>() { item1, item2, item3, item4 };
 
@@ -92,7 +92,7 @@ namespace UnitTest.ToDoItems
         public async Task CreateToDoItem_ReturnsOk()
         {
             var name = "name";
-            var priority = ToDoItemPriority.low;
+            var priority = ToDoItemPriority.Low;
             var dto = new ToDoItemCreateDTO
             {
                 name = name,
@@ -116,7 +116,7 @@ namespace UnitTest.ToDoItems
         [Fact]
         public async Task CreateToDoItem_Returns400RequiredName()
         {
-            var priority = ToDoItemPriority.low;
+            var priority = ToDoItemPriority.Low;
             var dto = new ToDoItemCreateDTO
             {
                 priority = priority
@@ -150,7 +150,7 @@ namespace UnitTest.ToDoItems
         [Fact]
         public async Task UpdateUndoneToDoItem_ReturnsOk()
         {
-            var item = new TestableToDoItem("name", "desc", ToDoItemPriority.low, new DateTime(2025, 03, 25), false);
+            var item = new TestableToDoItem("name", "desc", ToDoItemPriority.Low, new DateTime(2025, 03, 25), false);
 
             _mockToDoItemRepo.Setup(repo => repo.GetToDoItemAsync(It.IsAny<int>())).ReturnsAsync(item);
 
@@ -164,7 +164,7 @@ namespace UnitTest.ToDoItems
         [Fact]
         public async Task UpdateDoneToDoItem_Returns400AlreadyDoneItem()
         {
-            var item = new TestableToDoItem("name", "desc", ToDoItemPriority.low, new DateTime(2025, 03, 25), true);
+            var item = new TestableToDoItem("name", "desc", ToDoItemPriority.Low, new DateTime(2025, 03, 25), true);
 
             _mockToDoItemRepo.Setup(repo => repo.GetToDoItemAsync(It.IsAny<int>())).ReturnsAsync(item);
 

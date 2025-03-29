@@ -2,8 +2,8 @@
 {
     public enum ToDoItemPriority
     {
-        low = 1,
-        medium = 2,
-        high = 3,
+        Low = 1,
+        Medium = 2,
+        High = 3,
     }
 }
