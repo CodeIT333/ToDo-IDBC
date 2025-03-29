@@ -10,6 +10,10 @@ a, .btn-link {
     color: #0071c1;
 }
 
+.btn {
+    border-radius: 15px;
+}
+
 .btn-primary {
     color: #fff;
     background-color: #1b6ec2;
@@ -102,29 +106,13 @@ code {
     color: #c02d76;
 }
 
-/*---table---*/
-.table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-    .table th, .table td {
-        padding: 10px;
-        border: 1px solid #ddd;
-    }
-
-    .table th {
-        background-color: #f4f4f4;
-        font-weight: bold;
-    }
-
-h1 {
-    margin-bottom: 20px;
-}
-
 /*---toggle btn---*/
 .toggle-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: 2rem;
+    width: 100%;
 }
 
 .switch {
@@ -172,6 +160,16 @@ input:checked + .slider {
         transform: translateX(24px);
     }
 
+.toggle-label {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.add-item {
+    margin-left: auto;
+}
+
 /*---modal---*/
 .modal.show {
     display: block;
@@ -181,3 +179,106 @@ input:checked + .slider {
 .modal-dialog {
     margin: 100px auto;
 }
+
+/*---cards---*/
+.card-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: flex-start;
+}
+
+.card {
+    background-color: #f8f9fa;
+    border-radius: 8px;
+    padding: 1rem;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    margin: 0.5rem;
+    width: 400px;
+    min-height: 180px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.card-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.card-id, .card-priority {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.card-priority {
+    font-weight: bold;
+    border-radius: 4px;
+    padding: 2px 6px;
+    color: white;
+}
+
+.priority-low {
+    background-color: #6c757d;
+}
+
+.priority-medium {
+    background-color: #ffc107;
+}
+
+.priority-high {
+    background-color: #dc3545;
+}
+
+.card-body {
+    flex-grow: 1;
+    margin-bottom: 0.5rem;
+}
+
+.card-name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-bottom: 0.5rem;
+}
+
+    .card-name::-webkit-scrollbar {
+        height: 4px;
+    }
+
+    .card-name::-webkit-scrollbar-thumb {
+        background-color: #aaa;
+        border-radius: 2px;
+    }
+
+.card-description {
+    margin-top: 0.3rem;
+    color: #555;
+}
+
+.card-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.85rem;
+    color: #666;
+}
+
+.card-status {
+    font-weight: bold;
+}
+
+.status-done {
+    color: #28a745;
+}
+
+.status-not-done {
+    color: #dc3545;
+}
+
+.card-date {
+    font-size: 0.85rem;
+}
+

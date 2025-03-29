@@ -4,19 +4,21 @@
 @inject HttpClient HttpClient
 @inject ToDoItemService service
 
-<PageTitle>Home</PageTitle>
+<PageTitle>TO-Do Item List</PageTitle>
 
 <h1>To-Do Item List</h1>
 
- <div class="toggle-container">
-    <label class="switch">
-        <input type="checkbox" checked="@isDone" @onchange="ToggleIsDone">
-        <span class="slider"></span>
-    </label>
-    <span>@(isDone ? "Show Completed" : "Show Incomplete")</span>
+<div class="toggle-container">
+    <div class="toggle-label">
+        <label class="switch">
+            <input type="checkbox" checked="@isDone" @onchange="ToggleIsDone">
+            <span class="slider"></span>
+        </label>
+        <span>@(isDone ? "Show Completed" : "Show Incomplete")</span>
+    </div>
+    <button class="btn btn-primary add-item" @onclick="ShowAddModal">Add New To-Do Item</button>
 </div>
 
-<button class="btn btn-primary" @onclick="ShowAddModal">Add New To-Do Item</button>
 
 @if (showAddModal)
 {
@@ -33,13 +35,13 @@
 
                         <div class="mb-3">
                             <label class="form-label">Name</label>
-                            <InputText class="form-control" @bind-Value="newItem.name" />
+                            <InputText class="form-control" @bind-Value="newItem.name" maxlength="64" />
                             <ValidationMessage For="@(() => newItem.name)" />
                         </div>
 
                         <div class="mb-3">
                             <label class="form-label">Description</label>
-                            <InputTextArea class="form-control" @bind-Value="newItem.description" />
+                            <InputTextArea class="form-control" @bind-Value="newItem.description" maxlength="256" />
                         </div>
 
                         <div class="mb-3">
@@ -61,38 +63,36 @@
     </div>
 }
 
-
 @if (!items.Any())
 {
-<p>No to-do items found :c</p>
+    <p>No to-do items found :c</p>
 }
 else
 {
-<table class="table">
-    <thead>
-        <tr>
-            <th>ID</th>
-            <th>Name</th>
-            <th>Description</th>
-            <th>Priority</th>
-            <th>Created At</th>
-            <th>Is Done</th>
-        </tr>
-    </thead>
-    <tbody>
+    <div class="card-container">
         @foreach (var item in items)
         {
-            <tr>
-                <td>@item.id</td>
-                <td>@item.name</td>
-                <td>@item.description</td>
-                <td>@item.priority</td>
-                <td>@item.createdAt.ToString("yyyy-MM-dd HH:mm")</td>
-                <td>@(item.isDone ? "Yes" : "No")</td>
-            </tr>
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-id">ID: @item.id</span>
+                    <span class="card-priority @GetPriorityClass(item.priority)">@item.priority</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-name" title="@item.name">@item.name</div>
+                    @if (!string.IsNullOrEmpty(item.description))
+                    {
+                        <div class="card-description">@item.description</div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <span class="card-status @GetStatusClass(item.isDone)">
+                        @(item.isDone ? "Done" : "Not Done")
+                    </span>
+                    <span class="card-date">@item.createdAt.ToString("yyyy-MM-dd HH:mm")</span>
+                </div>
+            </div>
         }
-    </tbody>
-</table>
+    </div>
 }
 
 @code {
@@ -139,4 +139,14 @@ else
             await LoadToDoItemsAsync();
         }
     }
+
+    private string GetPriorityClass(ToDoItemPriority priority) => priority switch
+    {
+        ToDoItemPriority.Low => "priority-low",
+        ToDoItemPriority.Medium => "priority-medium",
+        ToDoItemPriority.High => "priority-high",
+        _ => "priority-unknown"
+    };
+
+    private string GetStatusClass(bool isDone) => isDone ? "status-done" : "status-not-done";
 }
