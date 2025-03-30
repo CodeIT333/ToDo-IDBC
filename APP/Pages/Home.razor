@@ -1,0 +1,188 @@
+﻿@using APP.Services
+
+@page "/"
+@inject HttpClient HttpClient
+@inject ToDoItemService service
+
+<PageTitle>TO-Do Item List</PageTitle>
+
+<h1>To-Do Item List</h1>
+
+<Toaster @ref="toaster" />
+
+<div class="toggle-container">
+    <div class="toggle-label">
+        <label class="switch">
+            <input type="checkbox" checked="@isDone" @onchange="ToggleIsDone">
+            <span class="slider"></span>
+        </label>
+        <span>@(isDone ? "Show Incompleted" : "Show Completed")</span>
+    </div>
+    <button class="btn btn-primary add-item" @onclick="ShowAddModal">Add New To-Do Item</button>
+</div>
+
+@if (showAddModal)
+{
+    <div class="modal show d-block" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Add New To-Do Item</h5>
+                    <button type="button" class="btn-close" @onclick="HideAddModal"></button>
+                </div>
+                <div class="modal-body">
+                    <EditForm Model="newItem" OnValidSubmit="AddToDoItemAsync">
+                        <DataAnnotationsValidator></DataAnnotationsValidator>
+
+                        <div class="mb-3">
+                            <label class="form-label">Name</label>
+                            <InputText class="form-control" @bind-Value="newItem.name" maxlength="64" />
+                            <ValidationMessage For="@(() => newItem.name)" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Description</label>
+                            <InputTextArea class="form-control" @bind-Value="newItem.description" maxlength="256" />
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Priority</label>
+                            <InputSelect class="form-select" @bind-Value="newItem.priority">
+                                <option value="1">Low</option>
+                                <option value="2">Medium</option>
+                                <option value="3">High</option>
+                            </InputSelect>
+                            <ValidationMessage For="@(() => newItem.priority)" />
+                        </div>
+
+                        <button type="submit" class="btn btn-success">Add</button>
+                        <button type="button" class="btn btn-secondary" @onclick="HideAddModal">Cancel</button>
+                    </EditForm>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@if (!items.Any())
+{
+    <p>No @(isDone ? "done" : "undone") to-do items found :c</p>
+}
+else
+{
+    <div class="card-container">
+        @foreach (var item in items)
+        {
+            <div class="card">
+                <div class="card-header">
+                    <span class="card-id">ID: @item.id</span>
+                    <span class="card-priority @GetPriorityClass(item.priority)">@item.priority</span>
+                </div>
+                <div class="card-body">
+                    <div class="card-name" title="@item.name">@item.name</div>
+                    @if (!string.IsNullOrEmpty(item.description))
+                    {
+                        <div class="card-description">@item.description</div>
+                    }
+                </div>
+                <div class="card-footer">
+                    <span class="card-status @GetStatusClass(item.isDone)">
+                        @(item.isDone ? "Done" : "Not Done")
+                    </span>
+                    <span class="card-date">@item.createdAt.ToString("yyyy-MM-dd HH:mm")</span>
+                    @if (!item.isDone)
+                    {
+                        <div class="mark-done">
+                            <label class="checkbox-container">
+                                <input type="checkbox" @bind="item.isDone" @onclick="() => MarkDone(item.id)" />
+                                <span class="checkmark"></span>
+                                <span>Mark Done</span>
+                            </label>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+    </div>
+}
+
+@code {
+    private bool isDone = false;
+    private bool showAddModal = false;
+
+    List<ToDoItemList> items = new();
+    private ToDoItemCreate newItem = new();
+
+    private Toaster toaster;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadToDoItemsAsync();
+    }
+
+    private async Task LoadToDoItemsAsync()
+    {
+        items = await service.ListToDoItemsAsync(isDone);
+    }
+
+    private async Task ToggleIsDone(ChangeEventArgs e)
+    {
+        isDone = (bool)e.Value;
+        await LoadToDoItemsAsync();
+    }
+
+    private void ShowAddModal()
+    {
+        newItem = new ToDoItemCreate();
+        showAddModal = true;
+    }
+
+    private void HideAddModal()
+    {
+        showAddModal = false;
+    }
+
+    private async Task AddToDoItemAsync()
+    {
+        var response = await service.CreateToDoItemAsync(newItem);
+
+        if (response.IsSuccessStatusCode)
+        {
+            showAddModal = false;
+            toaster.ShowMessage("Item created successfully!", true);
+            await LoadToDoItemsAsync();
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            toaster.ShowMessage(errorMessage, false);
+        }
+    }
+
+    private string GetPriorityClass(ToDoItemPriority priority) => priority switch
+    {
+        ToDoItemPriority.Low => "priority-low",
+        ToDoItemPriority.Medium => "priority-medium",
+        ToDoItemPriority.High => "priority-high",
+        _ => "priority-unknown"
+    };
+
+    private string GetStatusClass(bool isDone) => isDone ? "status-done" : "status-not-done";
+
+    private async Task MarkDone(int itemId)
+    {
+        var response = await service.UpdateToDoItemAsync(itemId);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadToDoItemsAsync();
+            toaster.ShowMessage("Item marked done!", true);
+            StateHasChanged();
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            toaster.ShowMessage(errorMessage, false);
+        }
+    }
+}
