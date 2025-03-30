@@ -1,0 +1,25 @@
+﻿<div class="toaster">
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <div class="@messageClass" role="alert">@message</div>
+    }
+</div>
+
+@code {
+    private string? message;
+    private string messageClass;
+
+    public void ShowMessage(string text, bool isSuccess)
+    {
+        message = text;
+        messageClass = isSuccess ? "toaster-success" : "toaster-danger";
+        StateHasChanged();
+
+        // hide after 5 sec
+        _ = Task.Delay(5000).ContinueWith(_ =>
+        {
+            message = null;
+            StateHasChanged();
+        });
+    }
+}

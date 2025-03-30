@@ -32,16 +32,16 @@ namespace API.Controllers
         public async Task<ActionResult> CreateToDoItemAsync(ToDoItemCreateDTO dto)
         {
             await _toDoItemService.CreateToDoItemAsync(dto);
-            return Ok();
+            return StatusCode(201);
         }
 
-        [HttpPut]
+        [HttpPut("mark-done/{id}")]
         [SwaggerResponse(204)]
         [SwaggerResponse(404, Type = typeof(ErrorResponse))]
-        public async Task<ActionResult> UpdateToDoItemAsync(int id)
+        public async Task<ActionResult> UpdateToDoItemAsync([FromRoute] int id)
         {
             await _toDoItemService.UpdateToDoItemAsync(id);
-            return Ok();
+            return NoContent();
         }
     }
 }

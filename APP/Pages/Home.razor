@@ -8,17 +8,18 @@
 
 <h1>To-Do Item List</h1>
 
+<Toaster @ref="toaster" />
+
 <div class="toggle-container">
     <div class="toggle-label">
         <label class="switch">
             <input type="checkbox" checked="@isDone" @onchange="ToggleIsDone">
             <span class="slider"></span>
         </label>
-        <span>@(isDone ? "Show Completed" : "Show Incomplete")</span>
+        <span>@(isDone ? "Show Incompleted" : "Show Completed")</span>
     </div>
     <button class="btn btn-primary add-item" @onclick="ShowAddModal">Add New To-Do Item</button>
 </div>
-
 
 @if (showAddModal)
 {
@@ -65,7 +66,7 @@
 
 @if (!items.Any())
 {
-    <p>No to-do items found :c</p>
+    <p>No @(isDone ? "done" : "undone") to-do items found :c</p>
 }
 else
 {
@@ -89,6 +90,16 @@ else
                         @(item.isDone ? "Done" : "Not Done")
                     </span>
                     <span class="card-date">@item.createdAt.ToString("yyyy-MM-dd HH:mm")</span>
+                    @if (!item.isDone)
+                    {
+                        <div class="mark-done">
+                            <label class="checkbox-container">
+                                <input type="checkbox" @bind="item.isDone" @onclick="() => MarkDone(item.id)" />
+                                <span class="checkmark"></span>
+                                <span>Mark Done</span>
+                            </label>
+                        </div>
+                    }
                 </div>
             </div>
         }
@@ -101,6 +112,8 @@ else
 
     List<ToDoItemList> items = new();
     private ToDoItemCreate newItem = new();
+
+    private Toaster toaster;
 
     protected override async Task OnInitializedAsync()
     {
@@ -136,7 +149,13 @@ else
         if (response.IsSuccessStatusCode)
         {
             showAddModal = false;
+            toaster.ShowMessage("Item created successfully!", true);
             await LoadToDoItemsAsync();
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            toaster.ShowMessage(errorMessage, false);
         }
     }
 
@@ -149,4 +168,21 @@ else
     };
 
     private string GetStatusClass(bool isDone) => isDone ? "status-done" : "status-not-done";
+
+    private async Task MarkDone(int itemId)
+    {
+        var response = await service.UpdateToDoItemAsync(itemId);
+
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadToDoItemsAsync();
+            toaster.ShowMessage("Item marked done!", true);
+            StateHasChanged();
+        }
+        else
+        {
+            var errorMessage = await response.Content.ReadAsStringAsync();
+            toaster.ShowMessage(errorMessage, false);
+        }
+    }
 }
